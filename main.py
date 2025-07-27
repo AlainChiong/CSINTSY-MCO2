@@ -25,16 +25,16 @@ def handle_statement(text):
         (r"(\w+) is a sister of (\w+)\.", lambda x, y: [f"female({x})", f"sibling({x}, {y})"]),
         (r"(\w+) is the mother of (\w+)\.", lambda x, y: [f"female({x})", f"parent({x}, {y})"]),
         (r"(\w+) is a grandmother of (\w+)\.", lambda x, y: [f"female({x})", f"grandparent({x}, {y})"]),
-        (r"(\w+) is a child of (\w+)\.", lambda x, y: [f"child({x}, {y})"]),
-        (r"(\w+) is a daughter of (\w+)\.", lambda x, y: [f"female({x})", f"child({x}, {y})"]),
+        (r"(\w+) is a child of (\w+)\.", lambda x, y: [f"parent({y}, {x})"]),
+        (r"(\w+) is a daughter of (\w+)\.", lambda x, y: [f"female({x})", f"parent({y}, {x})"]),
         (r"(\w+) is an uncle of (\w+)\.", lambda x, y: [f"male({x})", f"uncle({x}, {y})"]),
         
         (r"(\w+) is a brother of (\w+)\.", lambda x, y: [f"male({x})", f"sibling({x}, {y})"]),
         (r"(\w+) is the father of (\w+)\.", lambda x, y: [f"male({x})", f"parent({x}, {y})"]),
         (r"(\w+) and (\w+) are the parents of (\w+)\.", lambda x, y, z: [f"parent({x}, {z})", f"parent({y}, {z})"]),
         (r"(\w+) is a grandfather of (\w+)\.", lambda x, y: [f"male({x})", f"grandparent({x}, {y})"]),
-        (r"(\w+), (\w+), and (\w+) are children of (\w+)\.", lambda a, b, c, d: [f"child({a}, {d})", f"child({b}, {d})", f"child({c}, {d})"]),
-        (r"(\w+) is a son of (\w+)\.", lambda x, y: [f"male({x})", f"child({x}, {y})"]),
+        (r"(\w+), (\w+), and (\w+) are children of (\w+)\.", lambda a, b, c, d: [f"parent({d}, {a})", f"parent({d}, {b})", f"parent({d}, {c})"]),
+        (r"(\w+) is a son of (\w+)\.", lambda x, y: [f"male({x})", f"parent({y}, {x})"]),
         (r"(\w+) is an aunt of (\w+)\.", lambda x, y: [f"female({x})", f"aunt({x}, {y})"])
     ]
 
