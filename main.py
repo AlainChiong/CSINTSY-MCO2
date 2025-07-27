@@ -21,20 +21,21 @@ def query_fact(query):
 
 def handle_statement(text):
     patterns = [
-        (r"(\w+) is the mother of (\w+)\.", lambda x, y: [f"female({x})", f"parent({x}, {y})"]),
-        (r"(\w+) is the father of (\w+)\.", lambda x, y: [f"male({x})", f"parent({x}, {y})"]),
-        (r"(\w+) is a brother of (\w+)\.", lambda x, y: [f"male({x})", f"sibling({x}, {y})"]),
-        (r"(\w+) is a sister of (\w+)\.", lambda x, y: [f"female({x})", f"sibling({x}, {y})"]),
-        (r"(\w+) is a son of (\w+)\.", lambda x, y: [f"male({x})", f"child({x}, {y})"]),
-        (r"(\w+) is a daughter of (\w+)\.", lambda x, y: [f"female({x})", f"child({x}, {y})"]),
-        (r"(\w+) is a child of (\w+)\.", lambda x, y: [f"child({x}, {y})"]),
-        (r"(\w+) is a grandmother of (\w+)\.", lambda x, y: [f"female({x})", f"grandparent({x}, {y})"]),
-        (r"(\w+) is a grandfather of (\w+)\.", lambda x, y: [f"male({x})", f"grandparent({x}, {y})"]),
-        (r"(\w+) is an uncle of (\w+)\.", lambda x, y: [f"male({x})", f"uncle({x}, {y})"]),
-        (r"(\w+) is an aunt of (\w+)\.", lambda x, y: [f"female({x})", f"aunt({x}, {y})"]),
         (r"(\w+) and (\w+) are siblings\.", lambda x, y: [f"sibling({x}, {y})", f"sibling({y}, {x})"]),
+        (r"(\w+) is a sister of (\w+)\.", lambda x, y: [f"female({x})", f"sibling({x}, {y})"]),
+        (r"(\w+) is the mother of (\w+)\.", lambda x, y: [f"female({x})", f"parent({x}, {y})"]),
+        (r"(\w+) is a grandmother of (\w+)\.", lambda x, y: [f"female({x})", f"grandparent({x}, {y})"]),
+        (r"(\w+) is a child of (\w+)\.", lambda x, y: [f"child({x}, {y})"]),
+        (r"(\w+) is a daughter of (\w+)\.", lambda x, y: [f"female({x})", f"child({x}, {y})"]),
+        (r"(\w+) is an uncle of (\w+)\.", lambda x, y: [f"male({x})", f"uncle({x}, {y})"]),
+        
+        (r"(\w+) is a brother of (\w+)\.", lambda x, y: [f"male({x})", f"sibling({x}, {y})"]),
+        (r"(\w+) is the father of (\w+)\.", lambda x, y: [f"male({x})", f"parent({x}, {y})"]),
         (r"(\w+) and (\w+) are the parents of (\w+)\.", lambda x, y, z: [f"parent({x}, {z})", f"parent({y}, {z})"]),
-        (r"(\w+), (\w+), and (\w+) are children of (\w+)\.", lambda a, b, c, d: [f"child({a}, {d})", f"child({b}, {d})", f"child({c}, {d})"])
+        (r"(\w+) is a grandfather of (\w+)\.", lambda x, y: [f"male({x})", f"grandparent({x}, {y})"]),
+        (r"(\w+), (\w+), and (\w+) are children of (\w+)\.", lambda a, b, c, d: [f"child({a}, {d})", f"child({b}, {d})", f"child({c}, {d})"]),
+        (r"(\w+) is a son of (\w+)\.", lambda x, y: [f"male({x})", f"child({x}, {y})"]),
+        (r"(\w+) is an aunt of (\w+)\.", lambda x, y: [f"female({x})", f"aunt({x}, {y})"])
     ]
 
     for pattern, logic in patterns:
@@ -51,16 +52,31 @@ def handle_statement(text):
 
 def handle_question(text):
     patterns = [
+        (r"Are (\w+) and (\w+) siblings\?", lambda x, y: f"sibling({x}, {y})"),
+        (r"Is (\w+) a sister of (\w+)\?", lambda x, y: f"sister({x}, {y})"),
+        (r"Is (\w+) a brother of (\w+)\?", lambda x, y: f"brother({x}, {y})"),
         (r"Is (\w+) the mother of (\w+)\?", lambda x, y: f"mother({x}, {y})"),
         (r"Is (\w+) the father of (\w+)\?", lambda x, y: f"father({x}, {y})"),
-        (r"Is (\w+) a grandfather of (\w+)\?", lambda x, y: f"grandfather({x}, {y})"),
+        (r"Are (\w+) and (\w+) the parents of (\w+)\?", lambda x, y, z: f"parent({x}, {z}), parent({y}, {z})"),
         (r"Is (\w+) a grandmother of (\w+)\?", lambda x, y: f"grandmother({x}, {y})"),
-        (r"Are (\w+) and (\w+) siblings\?", lambda x, y: f"sibling({x}, {y})"),
-        (r"Who are the siblings of (\w+)\?", lambda x: f"sibling(X, {x})"),
-        (r"Who are the children of (\w+)\?", lambda x: f"child(X, {x})"),
-        (r"Who are the parents of (\w+)\?", lambda x: f"parent(X, {x})"),
+        (r"Is (\w+) a daughter of (\w+)\?", lambda x, y: f"daughter({x}, {y})"),
+        (r"Is (\w+) a son of (\w+)\?", lambda x, y: f"son({x}, {y})"),
+        (r"Is (\w+) a child of (\w+)\?", lambda x, y: f"child({x}, {y})"),
+        (r"Are (\w+), (\w+), and (\w+) children of (\w+)\?", lambda a, b, c, d: f"child({a}, {d}), child({b}, {d}), child({c}, {d})"),
         (r"Is (\w+) an uncle of (\w+)\?", lambda x, y: f"uncle({x}, {y})"),
-        (r"Is (\w+) an aunt of (\w+)\?", lambda x, y: f"aunt({x}, {y})")
+        
+        (r"Who are the siblings of (\w+)\?", lambda x: f"sibling(X, {x})"),
+        (r"Who are the sisters of (\w+)\?", lambda x: f"sister(X, {x})"),
+        (r"Who are the brothers of (\w+)\?", lambda x: f"brother(X, {x})"),
+        (r"Who is the mother of (\w+)\?", lambda x: f"mother(X, {x})"),
+        (r"Who is the father of (\w+)\?", lambda x: f"father(X, {x})"),
+        (r"Who are the parents of (\w+)\?", lambda x: f"parent(X, {x})"),
+        (r"Is (\w+) a grandfather of (\w+)\?", lambda x, y: f"grandfather({x}, {y})"),
+        (r"Who are the daughters of (\w+)\?", lambda x: f"daughter(X, {x})"),
+        (r"Who are the sons of (\w+)\?", lambda x: f"son(X, {x})"),
+        (r"Who are the children of (\w+)\?", lambda x: f"child(X, {x})"),
+        (r"Is (\w+) an aunt of (\w+)\?", lambda x, y: f"aunt({x}, {y})"),
+        (r"Are (\w+) and (\w+) relatives\?", lambda x, y: f"relative({x}, {y})"),    
     ]
 
     for pattern, logic in patterns:
