@@ -1,11 +1,9 @@
 from pyswip import Prolog
 import re
 
-# Initialize Prolog and load knowledge base
 prolog = Prolog()
 prolog.consult("family.pl")
 
-# Helper functions
 def add_fact(fact):
     try:
         prolog.assertz(fact)
