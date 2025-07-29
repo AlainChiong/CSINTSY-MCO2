@@ -45,6 +45,22 @@ def contradicts_gender_constraints(facts):
             parent = fact[7:].split(",")[0]
             if is_female(parent):
                 return True
+        elif fact.startswith("aunt("):
+            parent = fact[5:].split(",")[0]
+            if is_male(parent):
+                return True
+        elif fact.startswith("uncle("):
+            parent = fact[6:].split(",")[0]
+            if is_female(parent):
+                return True
+        elif fact.startswith("daughter("):
+            parent = fact[9:].split(",")[0]
+            if is_male(parent):
+                return True
+        elif fact.startswith("son("):
+            parent = fact[4:].split(",")[0]
+            if is_female(parent):
+                return True
     return False
 
 def handle_statement(text):
