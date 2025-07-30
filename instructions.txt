@@ -1,0 +1,2 @@
+HOW TO RUN THE FILE:
+Run python main.py in command terminal
