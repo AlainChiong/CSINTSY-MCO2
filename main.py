@@ -27,6 +27,48 @@ def creates_cycle(parent, child):
     # Would adding parent(X, Y) mean Y is already an ancestor of X?
     return bool(query_fact(f"ancestor({child}, {parent})"))
 
+
+def is_self_relation(facts):
+    for fact in facts:
+        # Extract arguments inside parentheses
+        match = re.match(r"\w+\(([^,]+),\s*([^)]+)\)", fact)
+        if match:
+            person1, person2 = match.groups()
+            if person1 == person2:
+                return True
+    return False
+
+def is_incestuous(facts):
+    suspicious = False
+
+    # Step 1: Check if siblings are parents of the same child
+    parent_facts = [fact for fact in facts if fact.startswith("parent(")]
+    child_parents = {}
+
+    for fact in parent_facts:
+        parent, child = fact[7:-1].split(",")
+        parent, child = parent.strip(), child.strip()
+        if child not in child_parents:
+            child_parents[child] = []
+        child_parents[child].append(parent)
+
+    for child, parents in child_parents.items():
+        if len(parents) == 2:
+            p1, p2 = parents
+            if query_fact(f"sibling({p1}, {p2})") or query_fact(f"sibling({p2}, {p1})"):
+                suspicious = True
+
+    # Step 2: Check if someone is both parent and grandparent of the same person
+    for fact in parent_facts:
+        parent, child = fact[7:-1].split(",")
+        parent, child = parent.strip(), child.strip()
+        grandparents = query_fact(f"parent({parent}, X), parent(X, {child})")
+        if grandparents:
+            suspicious = True
+
+    return suspicious
+
+
 def contradicts_gender_constraints(facts):
     for fact in facts:
         if fact.startswith("male("):
@@ -91,6 +133,10 @@ def handle_statement(text):
             if contradicts_gender_constraints(facts):
                 return "That's impossible due to a contradiction!"
 
+            # Check for self-relation
+            if is_self_relation(facts):
+                return "That's impossible — a person can't be related to themselves that way!"
+
             # Check for cycles (only for parent facts)
             for fact in facts:
                 if fact.startswith("parent("):
@@ -99,13 +145,22 @@ def handle_statement(text):
                     if creates_cycle(parent, child):
                         return "That's impossible due to a contradiction!"
 
+            # Check for incestuous relationships
+            incest_flag = False
+            if is_incestuous(facts):
+                incest_flag = True
+
+            # Add the facts
             for fact in facts:
                 if not add_fact(fact):
                     return "That's impossible!"
 
+            if incest_flag:
+                return "OK! I learned something. (That’s kinda weird though...)"
             return "OK! I learned something."
 
     return "I didn't understand that statement."
+
 
 def handle_question(text):
     patterns = [
