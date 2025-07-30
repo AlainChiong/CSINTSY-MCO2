@@ -20,12 +20,10 @@ def start_app():
     root.geometry("600x500")
     root.configure(bg="#f7f7f7")
 
-    # Custom fonts
     user_font = tkfont.Font(family="Helvetica", size=12, weight="bold")
     bot_font = tkfont.Font(family="Helvetica", size=12)
     entry_font = tkfont.Font(family="Helvetica", size=12)
 
-    # Output text widget with scrollbar
     frame = tk.Frame(root, bg="#f7f7f7")
     frame.pack(pady=10)
 
@@ -42,7 +40,6 @@ def start_app():
 
     output_text.insert(tk.END, "Welcome to the Family Chatbot!\n")
 
-    # Entry and button
     entry = tk.Entry(root, width=60, font=entry_font)
     entry.pack(pady=5)
 
