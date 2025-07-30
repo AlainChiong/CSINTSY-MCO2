@@ -47,7 +47,6 @@ cousin(X, Y) :-
     sibling(P1, P2),
     X \= Y.
 
-relative(X, Y) :- X = Y.                          % same person
 relative(X, Y) :- parent(X, Y).
 relative(X, Y) :- parent(Y, X).
 relative(X, Y) :- child(X, Y).
